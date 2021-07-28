@@ -1,0 +1,6 @@
+// use winapi or use execinfo to generate raw_stacktrace
+#cmakedefine USE_WINAPI_STACKTRACE
+#cmakedefine USE_EXECINFO_STACKTRACE
+
+// what to use to decode stacktrace
+#cmakedefine USE_LIBBFD_DECODE
