@@ -1,6 +1,4 @@
 #include <cstdio>
-#define USE_EXECINFO_STACKTRACE
-#define USE_LIBBFD_DECODE
 #include "include/stacktrace.h"
 
 #include <iostream>

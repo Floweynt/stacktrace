@@ -83,15 +83,15 @@ namespace stacktrace
 			SYMBOL_INFO* info = state.get_info_of(ptr);
 			IMAGEHLP_LINE* line = state.get_line_of(ptr);
 
-			std::string str(info ? (const char*)info->Name : "UNK")
+			std::string str(info ? (const char*)info->Name : "UNK");
 			if(info)
-				demangle(str);
+				detail::demangle(str);
 
 			trace.emplace_back(
 				info ? (uintptr_t)info->Address : ptr,
-				line ? (size_t)line->LineNumber : 0 : ,
+				line ? (size_t)line->LineNumber : 0,
 				line ? std::string((const char*)line->FileName) : "UNK",
-				info ? str
+				info ? str : "UNK"
 			);
 		}
 
