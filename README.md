@@ -44,3 +44,12 @@ int main()
     std::cout << stacktrace::stacktrace << e;
   }
 ```
+## Supported Versions
+Supported compilers:
+- MSCV
+- g++  
+
+Supported operating systems:
+- windows
+- linux
+- macos (not tested)
