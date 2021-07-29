@@ -1,5 +1,5 @@
 #include <string>
-#ifdef MSVC
+#ifdef _MSC_VER 
 // nothing
 #elif __GNUC__ 
 #include<cxxabi.h>
@@ -9,7 +9,7 @@ namespace stacktrace
 {
     namespace detail 
     {
-#ifdef MSVC
+#ifdef _MSC_VER
 #pragma message("CC: MSVC, NOOP demangle!")
         inline void demangle(std::string& str)
         {

@@ -28,7 +28,7 @@ namespace stacktrace
 			{
 				process = GetCurrentProcess();
 
-				if (!SymInitialize(process, NULL, TRUE))
+				if (!SymInitialize(process, nullptr, true))
 				{
 					is_valid = false;
 					return;
@@ -40,24 +40,24 @@ namespace stacktrace
 				is_valid = true;
 			}
 
-			inline SYMBOL_INFO get_info_of(uintptr_t ptr)
+			inline SYMBOL_INFO* get_info_of(uintptr_t ptr)
 			{
 				if(!is_valid)
 					return nullptr;
 
 				if (!SymFromAddr(process, (DWORD64)(ptr), 0, symbol))
-					nullptr;
+					return nullptr;
 
 				return symbol;
 			}
 
-			inline expected<IMAGEHLP_LINE*, DWORD> get_line_of(uintptr_t ptr)
+			inline IMAGEHLP_LINE* get_line_of(uintptr_t ptr)
 			{
 				if(!is_valid)
 					return nullptr;
 
 				DWORD tmp;
-				if (!SymGetLineFromAddr(process, (DWORD)(ptr), &tmp, &line))
+				if (!SymGetLineFromAddr(process, (DWORD64)(ptr), &tmp, &line))
 					return nullptr;
 
 				return &line;
