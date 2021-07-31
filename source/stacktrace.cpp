@@ -7,9 +7,17 @@ namespace stacktrace
 {
     namespace detail
     {
+        template<typename T>
+        inline void print_hex(T t, std::ostream& os)
+        {
+            os << std::setw(sizeof(T) * 2) << std::setfill('0') << std::hex << t << std::setw(0) << std::setfill(' ') << std::dec;
+        }
+
         void default_print(const entry& e, std::ostream& os)
         {
-            os << "AT: [" << e.address << "] " << e.file << ':' << e.line << " (" << e.function << ')';
+            os << "AT: [";
+            print_hex(e.address, os);
+            os << "] " << e.file << ':' << e.line << " (" << e.function << ')';
         };
     }
     stack_aware_exception::stack_aware_exception(
@@ -34,12 +42,6 @@ namespace stacktrace
         trace = get_traced(stacktrace(100));
     }
 
-    template<typename T>
-    inline void print_hex(T t, std::ostream& os)
-    {
-        os << std::setw(sizeof(T) * 2) << std::setfill('0') << std::hex << t << std::setw(0) << std::setfill(' ') << std::dec;
-    }
-
     std::ostream& operator<<(std::ostream& os, const stack_aware_exception& e)
     {
         int state = os.iword(detail::geti());
@@ -57,12 +59,7 @@ namespace stacktrace
 
             os << e.get_long_msg() << "\n\n";
             os << "STACKTRACE:" << "\n";
-            for (entry trace_entry : e.get_stacktrace())
-            {
-                os << "AT: [";
-                print_hex(trace_entry.address, os);
-                os << "] " << trace_entry.file << ":" << trace_entry.line << " (" << trace_entry.function << ")\n";
-            }
+            dump_stacktrace(e.get_stacktrace(), os);
 
             os.setf(flags);
             break;
