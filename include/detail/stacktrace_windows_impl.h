@@ -23,6 +23,7 @@ namespace stacktrace
 			IMAGEHLP_LINE line;
 			HANDLE process;
 			bool is_valid;
+
 		public:
 			inline winapi_wrapper()
 			{
@@ -40,30 +41,31 @@ namespace stacktrace
 				is_valid = true;
 			}
 
-			inline SYMBOL_INFO* get_info_of(uintptr_t ptr)
+			inline entry get_info(uintptr_t ptr)
 			{
-				if(!is_valid)
-					return nullptr;
-
-				if (!SymFromAddr(process, (DWORD64)(ptr), 0, symbol))
-					return nullptr;
-
-				return symbol;
-			}
-
-			inline IMAGEHLP_LINE* get_line_of(uintptr_t ptr)
-			{
-				if(!is_valid)
-					return nullptr;
-
 				DWORD tmp;
-				if (!SymGetLineFromAddr(process, (DWORD64)(ptr), &tmp, &line))
-					return nullptr;
+				entry ret{ ptr, 0, "UNK", "UNK" };
 
-				return &line;
+				if (!is_valid)
+					return ret;
+
+				if (SymFromAddr(process, (DWORD64)(ptr), 0, symbol))
+				{
+					ret.address = symbol->Address;
+					ret.function = symbol->Name;
+					demangle(ret.function);
+				}
+
+				if (SymGetLineFromAddr(process, (DWORD64)(ptr), &tmp, &line))
+				{
+					ret.line = line.LineNumber;
+					ret.file = line.FileName;
+				}
+
+				return ret;
 			}
 
-			~winapi_wrapper()
+			inline ~winapi_wrapper()
 			{
 				SymCleanup(process);
 			}
@@ -84,21 +86,7 @@ namespace stacktrace
 		symbol_stacktrace trace;
 		detail::winapi_wrapper state;
 		for (uintptr_t ptr : pointer_stacktrace)
-		{
-			SYMBOL_INFO* info = state.get_info_of(ptr);
-			IMAGEHLP_LINE* line = state.get_line_of(ptr);
-
-			std::string str(info ? (const char*)info->Name : "UNK");
-			if(info)
-				detail::demangle(str);
-
-			trace.emplace_back(
-				info ? (uintptr_t)info->Address : ptr,
-				line ? (size_t)line->LineNumber : 0,
-				line ? std::string((const char*)line->FileName) : "UNK",
-				info ? str : "UNK"
-			);
-		}
+			trace.emplace_back(state.get_info(ptr));
 
 		return trace;
 	}

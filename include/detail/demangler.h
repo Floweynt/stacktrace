@@ -1,7 +1,7 @@
 #include <string>
-#ifdef _MSC_VER 
+#if defined(USE_NOOP_DEMANGLE)
 // nothing
-#elif __GNUC__ 
+#elif defined(USE_ABI_CXX_DEMANGLE)
 #include<cxxabi.h>
 #endif
 
@@ -9,14 +9,14 @@ namespace stacktrace
 {
     namespace detail 
     {
-#ifdef _MSC_VER
-#pragma message("CC: MSVC, NOOP demangle!")
+#if defined(USE_NOOP_DEMANGLE)
+#pragma message("demangle: NOOP demangle!")
         inline void demangle(std::string& str)
         {
             // NOOP
         }
-#elif __GNUC__
-#pragma message("CC: GNU, abi::__cxa_demangle!")
+#elif defined(USE_ABI_CXX_DEMANGLE)
+#pragma message("demangle: abi::__cxa_demangle!")
         inline void demangle(std::string& str)
         {
             int status;

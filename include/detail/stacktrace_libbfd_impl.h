@@ -27,8 +27,6 @@ namespace stacktrace
             const char *functionname;
             unsigned int line;
             unsigned int discriminator;
-
-            char* buf[100];
         public:
             inline libbfd_wrapper()
             {
@@ -96,22 +94,25 @@ namespace stacktrace
                 int status = dladdr1((const void*) ptr, &info, (void**)&lm, RTLD_DL_LINKMAP);
                 if (status && info.dli_fname && info.dli_fname[0] != '\0')
                 {
+                    char buf[100];
+
                     info.dli_fbase = (void *) lm->l_addr;
                     info.dli_fbase = (void *) lm->l_addr;
                     if (info.dli_sname == NULL)
                         info.dli_saddr = info.dli_fbase;
 
                     if (info.dli_sname == NULL && info.dli_saddr == 0)
-                        return entry(ptr, 0, "UNK", "UNK");
-
-                    char sign;
-                    std::ptrdiff_t offset = ptr - (std::ptrdiff_t)info.dli_saddr;
-                    sign = offset >= 0 ? '+' : '-';
-                    offset = std::abs(offset);
-                    snprintf((char*)buf, sizeof(buf), "%c%#tx", sign, offset);
-                    
+                        snprintf(buf, sizeof(buf), "%p", (void*)ptr);    
+                    else
+                    {
+                        char sign;
+                        std::ptrdiff_t offset = ptr - (std::ptrdiff_t)info.dli_saddr;
+                        sign = offset >= 0 ? '+' : '-';
+                        offset = std::abs(offset);
+                        snprintf(buf, sizeof(buf), "%c%#tx", sign, offset);
+                    }
                     // turn +0x[offset] to symbols using libbfd
-                    pc = bfd_scan_vma((char*)buf, NULL, 16);
+                    pc = bfd_scan_vma(buf, NULL, 16);
                     found = false;
                   
 	                bfd_map_over_sections(abfd, [](bfd* abfd, asection* section, void* args){

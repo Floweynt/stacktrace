@@ -1,7 +1,6 @@
 #ifndef __STACKTRACE_FWD_H__
 #define __STACKTRACE_FWD_H__
 #include <string>
-#include <memory>
 #include <vector>
 
 namespace stacktrace

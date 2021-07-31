@@ -1,6 +1,5 @@
 #ifndef __STACKTRACE_H__
 #define __STACKTRACE_H__
-#include <ios>
 #include <iomanip>
 #include <ostream>
 #include <stdexcept>
@@ -10,7 +9,7 @@
 
 #pragma message("Dumping backend info")
 
-#ifdef USE_WINAPI_STACKTRACE
+#if defined(USE_WINAPI_STACKTRACE)
 #pragma message ("Using WINAPI")
 #include "detail/stacktrace_windows_impl.h"
 #elif defined(USE_EXECINFO_STACKTRACE)
@@ -18,7 +17,7 @@
 #include "detail/stacktrace_execinfo_impl.h"
 #endif
 
-#ifdef USE_LIBBFD_DECODE
+#if defined(USE_LIBBFD_DECODE)
 #pragma message("Using LIBBFD")
 #include "detail/stacktrace_libbfd_impl.h"
 #endif
