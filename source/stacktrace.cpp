@@ -62,14 +62,4 @@ namespace stacktrace {
 
         return os;
     } 
-
-    void dump_stacktrace(size_t capture, stack_printer printer, std::ostream& os)
-    {
-        symbol_stacktrace st = get_traced(stacktrace(capture));
-        for (entry e : st)
-        {
-            printer(e, os);
-            os << '\n';
-        }
-    }
 }
