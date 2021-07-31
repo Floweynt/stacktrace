@@ -88,7 +88,7 @@ int main(int argc, char** argv)
         char c = argv[1][0];
         stacktrace::stack_printer printer = [](const stacktrace::entry& e, std::ostream& os)
         {
-            os << "AT: [" << e.address << "] " << e.file << ':' << e.line << " (" << e.function << ')';
+            os << "AT: " << e.file << ':' << e.line << " (" << e.function << ')';
         };
 
         switch (c)
