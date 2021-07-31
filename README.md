@@ -23,7 +23,8 @@ Advanced usages [here!](https://github.com/FloweyTheFlower420/stacktrace/wiki/Ad
 ## Supported Versions
 Supported compilers:
 - MSCV
-- g++  
+- g++
+- clang
 
 Supported operating systems:
 - windows
