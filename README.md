@@ -1,4 +1,4 @@
-# stacktrace
+# stacktrace [![CMake](https://github.com/FloweyTheFlower420/stacktrace/actions/workflows/cmake.yml/badge.svg)](https://github.com/FloweyTheFlower420/stacktrace/actions/workflows/cmake.yml) 
 Header-only cross-platform C++ stacktraces, without needing to use boost.
 
 ## Features
