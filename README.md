@@ -31,4 +31,4 @@ Supported operating systems:
 - linux
 - macos (not tested)
 ## Building
-Check out the [wiki page](https://github.com/FloweyTheFlower420/stacktrace/wiki/Building)
+Check out the [wiki page](https://github.com/FloweyTheFlower420/stacktrace/wiki/Installing)
