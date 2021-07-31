@@ -27,7 +27,7 @@ namespace stacktrace {
     }
 
     template<typename T>
-    void print_hex(T t, std::ostream& os)
+    inline void print_hex(T t, std::ostream& os)
     {
         os << std::setw(sizeof(T) * 2) << std::setfill('0') << std::hex << t << std::setw(0) << std::setfill(' ') << std::dec;
     }
@@ -62,4 +62,14 @@ namespace stacktrace {
 
         return os;
     } 
+
+    void dump_stacktrace(size_t capture, stack_printer printer, std::ostream& os)
+    {
+        symbol_stacktrace st = get_traced(stacktrace(capture));
+        for (entry e : st)
+        {
+            printer(e, os);
+            os << '\n';
+        }
+    }
 }

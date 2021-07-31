@@ -3,6 +3,7 @@
 #include <ios>
 #include <ostream>
 #include <stdexcept>
+#include <functional>
 #include "config.h"
 #include "stacktrace_fwd.h"
 
@@ -34,6 +35,16 @@ namespace stacktrace
     // generates a raw stacktrace
     pointer_stacktrace stacktrace(size_t capture);
     symbol_stacktrace get_traced(const pointer_stacktrace& trace);
+
+    using stack_printer = std::function<void(const entry&, std::ostream& os)>;
+
+    void dump_stacktrace(size_t capture, stack_printer printer, std::ostream& os);
+    inline void dump_stacktrace(size_t capture, std::ostream& os)
+    {
+        dump_stacktrace(capture, [](const entry& e, std::ostream& os) {
+            os << "AT: [" << e.address << "] " << e.file << ':' << e.line << " (" << e.function << ')';
+        }, os);
+    }
 
     class stack_aware_exception : std::runtime_error
     {

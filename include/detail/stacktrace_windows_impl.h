@@ -62,6 +62,11 @@ namespace stacktrace
 
 				return &line;
 			}
+
+			~winapi_wrapper()
+			{
+				SymCleanup(process);
+			}
 		};
 	}
 

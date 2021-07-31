@@ -58,6 +58,7 @@ void method_3()
 
 void some_handler()
 {
+    stacktrace::dump_stacktrace(100, std::cout);
     throw_dbg(stacktrace::stack_aware_exception, "test_");
 }
 
