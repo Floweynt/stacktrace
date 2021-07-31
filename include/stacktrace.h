@@ -31,10 +31,7 @@ namespace stacktrace
             return i;
         }
 
-        void default_print(const entry& e, std::ostream& os)
-        {
-            os << "AT: [" << e.address << "] " << e.file << ':' << e.line << " (" << e.function << ')';
-        };
+        void default_print(const entry& e, std::ostream& os);
     }
 
     // generates a raw stacktrace
@@ -43,29 +40,31 @@ namespace stacktrace
 
     using stack_printer = std::function<void(const entry&, std::ostream& os)>;
 
-    inline void dump_stacktrace(size_t capture, stack_printer printer, std::ostream& os)
-    {
-        dump_stacktrace(get_traced(stacktrace(capture)), printer, os);
-    }
-
-    inline void dump_stacktrace(size_t capture, std::ostream& os)
-    {
-        dump_stacktrace(get_traced(stacktrace(capture)), detail::default_print, os);
-    }
-
-    inline void dump_stacktrace(const symbol_stacktrace& st, std::ostream& os)
-    {
-        dump_stacktrace(st, detail::default_print, os);
-    }
-
     // base impl for dump_stacktrace
-    void dump_stacktrace(const symbol_stacktrace& st, stack_printer printer, std::ostream& os)
+    inline void dump_stacktrace(const symbol_stacktrace& st, stack_printer printer, std::ostream& os)
     {
         for (entry e : st)
         {
             printer(e, os);
             os << '\n';
         }
+    }
+
+    inline void dump_stacktrace(size_t capture, stack_printer printer, std::ostream& os)
+    {
+        symbol_stacktrace st = get_traced(stacktrace(capture));
+        dump_stacktrace(st, printer, os);
+    }
+
+    inline void dump_stacktrace(size_t capture, std::ostream& os)
+    {
+        symbol_stacktrace st = get_traced(stacktrace(capture));
+        dump_stacktrace(st, detail::default_print, os);
+    }
+
+    inline void dump_stacktrace(const symbol_stacktrace& st, std::ostream& os)
+    {
+        dump_stacktrace(st, detail::default_print, os);
     }
 
 

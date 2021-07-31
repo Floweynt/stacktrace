@@ -3,7 +3,15 @@
 #include <stdexcept>
 #include "stacktrace.h"
 
-namespace stacktrace {
+namespace stacktrace 
+{
+    namespace detail
+    {
+        void default_print(const entry& e, std::ostream& os)
+        {
+            os << "AT: [" << e.address << "] " << e.file << ':' << e.line << " (" << e.function << ')';
+        };
+    }
     stack_aware_exception::stack_aware_exception(
         const char* what,
         int line,
