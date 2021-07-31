@@ -1,5 +1,5 @@
 # stacktrace
-C++ stacktraces, without needing to use boost.
+Cross-platform C++ stacktraces, without needing to use boost.
 
 ## Features
 Simple usage (one line!):
