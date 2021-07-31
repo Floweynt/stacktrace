@@ -4,7 +4,7 @@ project(stacktrace VERSION 1.0 DESCRIPTION "stacktrace" LANGUAGES C CXX)
 file(GLOB SRC_FILES "${PROJECT_SOURCE_DIR}/include/*.h" "${PROJECT_SOURCE_DIR}/source/stacktrace.cpp")
 add_library(stacktrace STATIC ${SRC_FILES})
 
-add_executable(stacktracetest "examples/main.cpp")
+add_executable(stacktracetest "${PROJECT_SOURCE_DIR}/examples/main.cpp")
 add_dependencies(stacktracetest stacktrace)
 
 include_directories("${PROJECT_BINARY_DIR}/include/")
@@ -14,7 +14,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 target_include_directories(stacktrace PUBLIC
                           "${PROJECT_BINARY_DIR}"
-                          "${PROJECT_SOURCE_DIR}/MathFunctions"
+                          "${PROJECT_SOURCE_DIR}/include/"
                           )
                       
 target_link_libraries(stacktracetest stacktrace)
