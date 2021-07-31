@@ -1,6 +1,4 @@
 #include <cstdio>
-#include "../include/stacktrace.h"
-
 #include <iostream>
 #include <iomanip>
 #include "stacktrace.h"
