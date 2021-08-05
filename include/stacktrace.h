@@ -1,7 +1,7 @@
 #ifndef __STACKTRACE_H__
 #define __STACKTRACE_H__
 #include <iomanip>
-#include <ostream>
+#include <iostream>
 #include <stdexcept>
 #include <functional>
 #include "config.h"
@@ -50,13 +50,13 @@ namespace stacktrace
     }
 
     // generates a raw stacktrace
-    pointer_stacktrace stacktrace(size_t capture);
+    pointer_stacktrace stacktrace(size_t capture = -1U);
     symbol_stacktrace get_traced(const pointer_stacktrace& trace);
 
     using stack_printer = std::function<void(const entry&, std::ostream& os)>;
 
     // base impl for dump_stacktrace
-    inline void dump_stacktrace(const symbol_stacktrace& st, stack_printer printer, std::ostream& os)
+    inline void dump_stacktrace(const symbol_stacktrace& st, std::ostream& os = std::cout, stack_printer printer = detail::default_print)
     {
         for (entry e : st)
         {
@@ -65,21 +65,10 @@ namespace stacktrace
         }
     }
 
-    inline void dump_stacktrace(size_t capture, stack_printer printer, std::ostream& os)
+    inline void dump_stacktrace(size_t capture = -1U, std::ostream& os = std::cout, stack_printer printer = detail::default_print)
     {
         symbol_stacktrace st = get_traced(stacktrace(capture));
-        dump_stacktrace(st, printer, os);
-    }
-
-    inline void dump_stacktrace(size_t capture, std::ostream& os)
-    {
-        symbol_stacktrace st = get_traced(stacktrace(capture));
-        dump_stacktrace(st, detail::default_print, os);
-    }
-
-    inline void dump_stacktrace(const symbol_stacktrace& st, std::ostream& os)
-    {
-        dump_stacktrace(st, detail::default_print, os);
+        dump_stacktrace(st, os, printer);
     }
 
     class stack_aware_exception : std::runtime_error
