@@ -20,6 +20,9 @@
 #if defined(USE_LIBBFD_DECODE)
 #pragma message("Using LIBBFD")
 #include "detail/stacktrace_libbfd_impl.h"
+#elif defined(USE_BACKTRACE_DECODE)
+#pragma message("Using libbacktrace")
+#include "detail/stacktrace_backtrace_impl.h"
 #endif
 
 namespace stacktrace

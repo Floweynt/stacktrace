@@ -4,6 +4,7 @@
 
 // what to use to decode stacktrace
 #cmakedefine USE_LIBBFD_DECODE
+#cmakedefine USE_BACKTRACE_DECODE
 
 #cmakedefine USE_ABI_CXX_DEMANGLE
 #cmakedefine USE_NOOP_DEMANGLE

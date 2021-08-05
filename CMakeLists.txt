@@ -40,22 +40,29 @@ install(FILES "${PROJECT_BINARY_DIR}/stacktrace_config_version.cmake" "${PROJECT
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 
+# libbfd and backtrace are mutually exclusive
+if (USE_LIBBFD_DECODE AND USE_BACKTRACE_DECODE)
+    message(FATAL_ERROR "cannot use both libbfd and libbacktrace")
+endif()
+
 # check for os + cc
 if (WIN32)
     message("OS: windows, using WINAPI impl")
     option(USE_WINAPI_STACKTRACE "Use winapi for stacktrace" ON)
     option(USE_EXECINFO_STACKTRACE "Use execinfo for stacktrace" OFF)
-    option(USE_LIBBFD_DECODE "Use libbdf for symbols" OFF)
-elseif(UNIX)
-    message("OS: linux, using execinfo.h and libbfd impl")
+    option(USE_LIBBFD_DECODE "Use libbfd for symbols" OFF)
+    option(USE_BACKTRACE_DECODE "Use backtrace for symbols" OFF)
+    if (USE_LIBBFD_DECODE OR USE_BACKTRACE_DECODE)
+        message(WARNING "cannot use libbfd or backtrace on windows, overriding to use WINAPI")
+    endif()
+elseif (UNIX OR APPLE)
+    message("OS: linux, using execinfo.h impl")
     option(USE_EXECINFO_STACKTRACE "Use execinfo for stacktrace" ON)
     option(USE_WINAPI_STACKTRACE "Use winapi for stacktrace" OFF)
-    option(USE_LIBBFD_DECODE "Use libbdf for symbols" ON)
-elseif(APPLE)
-    message("OS: apple, using execinfo.h and libbfd impl")
-    option(USE_EXECINFO_STACKTRACE "Use execinfo for stacktrace" ON)
-    option(USE_WINAPI_STACKTRACE "Use winapi for stacktrace" OFF)
-    option(USE_LIBBFD_DECODE "Use libbdf for symbols" ON)
+    if (NOT(USE_LIBBFD_DECODE OR USE_BACKTRACE_DECODE))
+        message(WARNING "neither use libbfd or backtrace was specified, using libbfd")
+        option(USE_LIBBFD_DECODE "use libbfd for symbols" ON)
+    endif()
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -72,8 +79,17 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     option(USE_NOOP_DEMANGLE "Use no-op for demangle" ON)
 endif()
 
+# same as has ABI (g++/clang)
+if(USE_BACKTRACE_DECODE AND NOT USE_ABI_CXX_DEMANGLE)
+    message(ERROR "Unable to use libbacktrace if there is no ABI")
+endif()
+
 if(USE_LIBBFD_DECODE)
+    message("Backend: using libbfd")
     target_link_libraries(stacktrace INTERFACE dl bfd)
+elseif(USE_BACKTRACE_DECODE)
+    message("Backend: using libbacktrace")
+    target_link_libraries(stacktrace INTERFACE backtrace)
 endif()
 
 configure_file("${PROJECT_SOURCE_DIR}/include/config.h.in" "${PROJECT_BINARY_DIR}/include/config.h")
@@ -86,5 +102,5 @@ add_dependencies(stacktrace-test stacktrace)
 include_directories("${PROJECT_BINARY_DIR}/include/")
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 set(CMAKE_BUILD_TYPE Debug)
-                      
+
 target_link_libraries(stacktrace-test stacktrace)

@@ -166,7 +166,7 @@ namespace stacktrace
     inline symbol_stacktrace get_traced(const pointer_stacktrace& trace) 
     {
         symbol_stacktrace ret;
-        detail::libbfd_wrapper state;
+        static detail::libbfd_wrapper state;
         ret.reserve(trace.size());
         for(auto i : trace)
             ret.push_back(state.get_info(i));

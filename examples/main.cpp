@@ -70,15 +70,8 @@ int main(int argc, char** argv)
     std::cout << "starting example print\n";
     if (argc == 1)
     {
-        std::cout << "argc == 1\n";
-        try
-        {
-            method_0();
-        }
-        catch (stacktrace::stack_aware_exception& e)
-        {
-            std::cout << stacktrace::stacktrace << e << std::endl;
-        }
+        stacktrace::dump_stacktrace(10, std::cout);
+        stacktrace::dump_stacktrace(10, std::cout);
     }
     else if (argc == 2)
     {

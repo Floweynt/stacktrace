@@ -1,3 +1,5 @@
+#ifndef __DEMANGLER_H__
+#define __DEMANGLER_H__
 #include <string>
 #if defined(USE_NOOP_DEMANGLE)
 // nothing
@@ -30,3 +32,4 @@ namespace stacktrace
 #endif
     }
 }
+#endif

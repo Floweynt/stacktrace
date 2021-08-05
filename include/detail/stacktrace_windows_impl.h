@@ -84,7 +84,7 @@ namespace stacktrace
 	inline symbol_stacktrace get_traced(const pointer_stacktrace& pointer_stacktrace)
 	{
 		symbol_stacktrace trace;
-		detail::winapi_wrapper state;
+		static detail::winapi_wrapper state;
 		for (uintptr_t ptr : pointer_stacktrace)
 			trace.emplace_back(state.get_info(ptr));
 
