@@ -130,7 +130,7 @@ namespace stacktrace
 
             os << e.get_long_msg() << "\n\n";
             os << "STACKTRACE:" << "\n";
-            dump_stacktrace(e.get_stacktrace(), os);
+            dump_stacktrace(e.get_stacktrace());
 
             os.setf(flags);
             break;

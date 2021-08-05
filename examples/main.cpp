@@ -70,8 +70,8 @@ int main(int argc, char** argv)
     std::cout << "starting example print\n";
     if (argc == 1)
     {
-        stacktrace::dump_stacktrace(10, std::cout);
-        stacktrace::dump_stacktrace(10, std::cout);
+        stacktrace::dump_stacktrace();
+        stacktrace::dump_stacktrace();
     }
     else if (argc == 2)
     {
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
             }
             break;
         case '1':
-            stacktrace::dump_stacktrace(10, std::cout);
+            stacktrace::dump_stacktrace();
             std::cout << std::endl;
             break;
         case '2':
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
             }
             break;
         case '3':
-            stacktrace::dump_stacktrace(10, printer, std::cout);
+            stacktrace::dump_stacktrace();
             std::cout << std::endl;
             break;
         default:
