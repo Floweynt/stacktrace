@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
-#include <functional>
 #include "config.h"
 #include "stacktrace_fwd.h"
 
@@ -53,7 +52,7 @@ namespace stacktrace
     pointer_stacktrace stacktrace(size_t capture = -1U);
     symbol_stacktrace get_traced(const pointer_stacktrace& trace);
 
-    using stack_printer = std::function<void(const entry&, std::ostream& os)>;
+    using stack_printer = void (*)(const entry&, std::ostream& os);
 
     // base impl for dump_stacktrace
     inline void dump_stacktrace(const symbol_stacktrace& st, std::ostream& os = std::cout, stack_printer printer = detail::default_print)

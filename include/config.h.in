@@ -12,3 +12,4 @@
 #cmakedefine COMPILER_CLANG
 #cmakedefine COMPILER_GNU
 #cmakedefine COMPILER_MSVC
+#cmakedefine MAX_CAPTURE_FRAMES @MAX_CAPTURE_FRAMES@

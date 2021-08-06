@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.9)
 project(stacktrace VERSION 1.0 DESCRIPTION "stacktrace" LANGUAGES CXX)
 
 add_library(stacktrace INTERFACE)
+set(MAX_CAPTURE_FRAMES "10000")
 
 # install stuff
 target_include_directories(stacktrace INTERFACE 
@@ -92,7 +93,7 @@ elseif(USE_BACKTRACE_DECODE)
     target_link_libraries(stacktrace INTERFACE backtrace)
 endif()
 
-configure_file("${PROJECT_SOURCE_DIR}/include/config.h.in" "${PROJECT_BINARY_DIR}/include/config.h")
+configure_file("${PROJECT_SOURCE_DIR}/include/config.h.in" "${PROJECT_BINARY_DIR}/include/config.h" @ONLY)
 
 # TESTS
 
