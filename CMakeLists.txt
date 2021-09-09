@@ -17,7 +17,7 @@ target_include_directories(stacktrace INTERFACE
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    "${PROJECT_BINARY_DIR}/stacktrace_config_version.cmake"
+    "${PROJECT_BINARY_DIR}/stacktrace-config-version.cmake"
     VERSION ${VERSION}
     COMPATIBILITY AnyNewerVersion
 )
@@ -33,13 +33,13 @@ install(TARGETS stacktrace
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
-    "${PROJECT_SOURCE_DIR}/cmake/stacktrace_config.cmake.in" 
-    "${PROJECT_BINARY_DIR}/stacktrace_config.cmake" 
+    "${PROJECT_SOURCE_DIR}/cmake/stacktrace-config.cmake.in" 
+    "${PROJECT_BINARY_DIR}/stacktrace-config.cmake" 
     INSTALL_DESTINATION lib/cmake/stacktrace
 )
 
 install(EXPORT stacktrace_targets DESTINATION lib/cmake/stacktrace)
-install(FILES "${PROJECT_BINARY_DIR}/stacktrace_config_version.cmake" "${PROJECT_BINARY_DIR}/stacktrace_config.cmake" 
+install(FILES "${PROJECT_BINARY_DIR}/stacktrace-config-version.cmake" "${PROJECT_BINARY_DIR}/stacktrace-config.cmake" 
     DESTINATION lib/cmake/stacktrace
 )
 
