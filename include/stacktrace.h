@@ -137,4 +137,6 @@ namespace stacktrace
 #endif
 
 #define throw_dbg(exception, what, ...) throw exception(what, __LINE__, __FILE__, __func__, __PRETTY_FUNCTION__)
+
+#define rethrow catch(std::exception& e) { throw stacktrace::stack_aware_exception(e.what(), __LINE__, __FILE__, __func__, __PRETTY_FUNCTION__) }
 #endif

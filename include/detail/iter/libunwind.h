@@ -3,27 +3,6 @@
 #include <libunwind.h>
 namespace stacktrace
 {
-	namespace detail
-	{
-		struct eh_frame_hdr
-		{
-			uint8_t version;
-			uint8_t eh_frame_ptr_enc;
-			uint8_t fde_count_enc;
-			uint8_t table_enc;
-		};
-
-		struct eh_frame
-		{
-
-		};
-
-		inline eh_frame* get_hdr()
-		{
-			return (eh_frame_hdr*)&__start_eh_frame_hdr;
-		}
-	}
-
 	class stack_iterator
 	{
 	public:
