@@ -8,7 +8,7 @@ Simple usage (one line!):
 
 int main()
 {
-  stacktrace::dump_stacktrace(10, std::cout); // dumps a max of 10 stack frames, then prints it to cout
+  stacktrace::dump_stacktrace(); // prints your stacktrace to cout
 }
 ```
 This will print out (built in debug mode for symbols):
