@@ -1,5 +1,4 @@
 #include <backtrace.h>
-#include "demangler.h"
 #include "../stacktrace_fwd.h"
 
 namespace stacktrace
@@ -8,8 +7,6 @@ namespace stacktrace
     {
         class backtrace_wrapper
         {
-            static backtrace_wrapper* instance;
-
             backtrace_state* state;
         public:
             inline backtrace_wrapper()
@@ -26,8 +23,9 @@ namespace stacktrace
 
                 backtrace_simple(state, 0, [](void* buf, uintptr_t pc) {
                     ((pointer_stacktrace*)buf)->push_back(pc);
-                }, [](void* data, const char*, int) {
-                    ((pointer_stacktrace*)buf)->push_back(0x0);
+                    return 0;
+                }, [](void* buf, const char*, int) {
+                ((pointer_stacktrace*)buf)->push_back(0x0);
                 }, (void*)&st);
 
                 return st;
@@ -39,18 +37,21 @@ namespace stacktrace
                 if (!state)
                     return e;
 
-                backtrace_syminfo(state, ptr, [ptr](void* data, uintptr_t, const char* symname, uintptr_t, uintptr_t) {
+                backtrace_pcinfo(state, ptr, [](void* data, uintptr_t pc, const char* fname, int lineno, const char* fn) {
                     entry* buf = (entry*)data;
-                    *buf = { ptr, 0, "UNK", str };
+                    *buf = { pc, (size_t)lineno, fname, fn};
+                    return 0;
                 }, nullptr, &e);
 
                 return e;
             }
-
-            static inline backtrace_wrapper& get_state()
-            {
-                return instance;
-            }
         };
+
+        inline backtrace_wrapper get_instance()
+        {
+            static backtrace_wrapper* ptr = new backtrace_wrapper();
+            return *ptr;
+        }
+
     }
 }
