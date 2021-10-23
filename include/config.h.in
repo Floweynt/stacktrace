@@ -1,13 +1,6 @@
-// use winapi or use execinfo to generate raw_stacktrace
-#cmakedefine USE_WINAPI_STACKTRACE
-#cmakedefine USE_EXECINFO_STACKTRACE
-
-// what to use to decode stacktrace
-#cmakedefine USE_LIBBFD_DECODE
-#cmakedefine USE_BACKTRACE_DECODE
-
-#cmakedefine USE_ABI_CXX_DEMANGLE
-#cmakedefine USE_NOOP_DEMANGLE
+#cmakedefine STACKTRACE_BACKEND @STACKTRACE_BACKEND@
+#cmakedefine DECODE_BACKEND @DECODE_BACKEND@
+#cmakedefine DEMANGLE_BACKEND @DEMANGLE_BACKEND@
 
 #cmakedefine COMPILER_CLANG
 #cmakedefine COMPILER_GNU

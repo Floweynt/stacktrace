@@ -1,0 +1,46 @@
+{
+    "stacktrace": {
+        "win": {
+            "winapi": true,
+            "execinfo": false,
+            "libbacktrace": true,
+            "libunwind": false
+        },
+        "linux": {
+            "winapi": false,
+            "execinfo": true,
+            "libbacktrace": true,
+            "libunwind": true
+        },
+        "mac": {
+            "winapi": false,
+            "execinfo": true,
+            "libbacktrace": true,
+            "libunwind": true
+        }
+    },
+    "decode": {
+        "win": {
+            "noop": true,
+            "winapi": true,
+            "libbfd": false,
+            "libbacktrace": true
+        },
+        "linux": {
+            "noop": true,
+            "winapi": false,
+            "libbfd": true,
+            "libbacktrace": true
+        },
+        "mac": {
+            "noop": true,
+            "winapi": false,
+            "libbfd": true,
+            "libbacktrace": true
+        }
+    },
+    "libs": {
+        "libbfd": "dl bfd",
+        "libbacktrace": "backtrace"
+    }
+}

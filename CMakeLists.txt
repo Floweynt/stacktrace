@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.19)
+
+# --------------------------- 
+# Basic cmake for install
+# ---------------------------
 
 project(stacktrace VERSION 1.0 DESCRIPTION "stacktrace" LANGUAGES CXX)
 
@@ -41,56 +45,107 @@ install(FILES "${PROJECT_BINARY_DIR}/stacktrace_config_version.cmake" "${PROJECT
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 
-# libbfd and backtrace are mutually exclusive
-if (USE_LIBBFD_DECODE AND USE_BACKTRACE_DECODE)
-    message(FATAL_ERROR "cannot use both libbfd and libbacktrace")
-endif()
+# --------------------------- 
+# Compat checking
+# ---------------------------
 
-# check for os + cc
+# set defaults
+set(IS_STACKTRACE_DEFAULT ON)
+set(IS_DECODE_DEFAULT ON)
+
 if (WIN32)
-    message("OS: windows, using WINAPI impl")
-    option(USE_WINAPI_STACKTRACE "Use winapi for stacktrace" ON)
-    option(USE_EXECINFO_STACKTRACE "Use execinfo for stacktrace" OFF)
-    option(USE_LIBBFD_DECODE "Use libbfd for symbols" OFF)
-    option(USE_BACKTRACE_DECODE "Use backtrace for symbols" OFF)
-    if (USE_LIBBFD_DECODE OR USE_BACKTRACE_DECODE)
-        message(WARNING "cannot use libbfd or backtrace on windows, overriding to use WINAPI")
-    endif()
+    set(STACKTRACE_BACKEND "winapi")
+    set(DECODE_BACKEND "winapi")
 elseif (UNIX OR APPLE)
-    message("OS: linux, using execinfo.h impl")
-    option(USE_EXECINFO_STACKTRACE "Use execinfo for stacktrace" ON)
-    option(USE_WINAPI_STACKTRACE "Use winapi for stacktrace" OFF)
-    if (NOT(USE_LIBBFD_DECODE OR USE_BACKTRACE_DECODE))
-        message(WARNING "neither use libbfd or backtrace was specified, using libbfd")
-        option(USE_LIBBFD_DECODE "use libbfd for symbols" ON)
-    endif()
+    set(STACKTRACE_BACKEND "execinfo")
+    set(DECODE_BACKEND "libbfd")
 endif()
 
+# read config
+file(READ "compat-cfg.json" _COMPATIBILITY_TABLE_JSON)
+
+# set some flags
+if (DEFINED USE_STACkTRACE_BACKEND)
+    set(IS_STACKTRACE_DEFAULT OFF)
+    set(STACKTRACE_BACKEND ${USE_STACkTRACE_BACKEND})
+endif()
+
+if (DEFINED USE_DECODE_BACKEND)
+    set(IS_DECODE_DEFAULT OFF)
+    set(DECODE_BACKEND ${USE_DECODE_BACKEND})
+endif()
+
+# check for compatibility
+if (WIN32)
+    set(_OS_NAME "win")
+elseif (UNIX)
+    set(_OS_NAME "linux")
+elseif (APPLE)
+    set(_OS_NAME "mac")
+endif()
+
+# check compat for stacktrace
+string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "stacktrace")
+string(JSON COMPAT_CHECK GET ${COMPAT_CHECK} ${_OS_NAME})
+string(JSON COMPAT_CHECK ERROR_VARIABLE _ERROR_CODE GET ${COMPAT_CHECK} ${STACKTRACE_BACKEND})
+
+if(_ERROR_CODE EQUAL NOTFOUND)
+    message(FATAL_ERROR "Nonexistent stacktrace generation backend '${STACkTRACE_BACKEND}'")
+elseif(COMPAT_CHECK EQUAL OFF)
+    message(FATAL_ERROR "Backend '${STACKTRACE_BACKEND}' is incompatibile OS '${_OS_NAME}'")
+endif()
+
+if(IS_STACKTRACE_DEFAULT)
+    message(WARNING "Backend for stacktrace generation not supplied by user using default backend for '${_OS_NAME}'")
+endif()
+
+# check compat for decode
+string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "decode")
+string(JSON COMPAT_CHECK GET ${COMPAT_CHECK} ${_OS_NAME})
+string(JSON COMPAT_CHECK ERROR_VARIABLE _ERROR_CODE GET ${COMPAT_CHECK} ${DECODE_BACKEND})
+
+if(_ERROR_CODE EQUAL NOTFOUND)
+    message(FATAL_ERROR "Nonexistent stacktrace decode backend '${DECODE_BACKEND}'")
+elseif(COMPAT_CHECK EQUAL OFF)
+    message(FATAL_ERROR "Backend '${DECODE_BACKEND}' is incompatibile OS '${_OS_NAME}'")
+endif()
+
+if(IS_DECODE_DEFAULT)
+    message(WARNING "Backend for stacktrace decode not supplied by user using default backend for '${_OS_NAME}'")
+endif()
+
+
+# linking voodoo
+string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "libs")
+string(JSON COMPAT_CHECK ERROR_VARIABLE _ERROR_CODE GET ${COMPAT_CHECK} ${STACKTRACE_BACKEND})
+
+if(NOT _ERROR_CODE EQUAL NOTFOUND)
+    target_link_libraries(stacktrace INTERFACE ${COMPAT_CHECK})
+endif()
+
+string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "libs")
+string(JSON COMPAT_CHECK ERROR_VARIABLE _ERROR_CODE GET ${COMPAT_CHECK} ${DECODE_BACKEND})
+
+if(NOT _ERROR_CODE EQUAL NOTFOUND)
+    target_link_libraries(stacktrace INTERFACE ${COMPAT_CHECK})
+endif()
+
+# set macros
+message("Using backends '${STACKTRACE_BACKEND}' for stack generation and '${DECODE_BACKEND}' for decode")
+
+set(STACKTRACE_BACKEND "\"detail/stack/${STACKTRACE_BACKEND}.h\"")
+set(DECODE_BACKEND "\"detail/decode/${DECODE_BACKEND}.h\"")
+
+# check for ABI compat
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message("CC: clang, using abi::__cxx_demangle!")
-    option(USE_ABI_CXX_DEMANGLE "Use abi::__cxx_demangle for demangle" ON)
-    option(USE_NOOP_DEMANGLE "Use no-op for demangle" OFF)
+    set(DEMANGLE_BACKEND "\"detail/demangle/cxxabi.h\"")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     message("CC: g++, using abi::__cxx_demangle!")
-    option(USE_ABI_CXX_DEMANGLE "Use abi::__cxx_demangle for demangle" ON)
-    option(USE_NOOP_DEMANGLE "Use no-op for demangle" OFF)
+    set(DEMANGLE_BACKEND "\"detail/demangle/cxxabi.h\"")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    message("CC: clang, using abi::__cxx_demangle!")
-    option(USE_ABI_CXX_DEMANGLE "Use abi::__cxx_demangle for demangle" OFF)
-    option(USE_NOOP_DEMANGLE "Use no-op for demangle" ON)
-endif()
-
-# same as has ABI (g++/clang)
-if(USE_BACKTRACE_DECODE AND NOT USE_ABI_CXX_DEMANGLE)
-    message(ERROR "Unable to use libbacktrace if there is no ABI")
-endif()
-
-if(USE_LIBBFD_DECODE)
-    message("Backend: using libbfd")
-    target_link_libraries(stacktrace INTERFACE dl bfd)
-elseif(USE_BACKTRACE_DECODE)
-    message("Backend: using libbacktrace")
-    target_link_libraries(stacktrace INTERFACE backtrace)
+    message("CC: msvc, using noop demangle!")
+    set(DEMANGLE_BACKEND "\"detail/demangle/noop.h\"")
 endif()
 
 configure_file("${PROJECT_SOURCE_DIR}/include/config.h.in" "${PROJECT_BINARY_DIR}/include/config.h" @ONLY)

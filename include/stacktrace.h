@@ -6,23 +6,9 @@
 #include "config.h"
 #include "stacktrace_fwd.h"
 
-#pragma message("Dumping backend info")
-
-#if defined(USE_WINAPI_STACKTRACE)
-#pragma message ("Using WINAPI")
-#include "detail/stacktrace_windows_impl.h"
-#elif defined(USE_EXECINFO_STACKTRACE)
-#pragma message("Using EXECINFO")
-#include "detail/stacktrace_execinfo_impl.h"
-#endif
-
-#if defined(USE_LIBBFD_DECODE)
-#pragma message("Using LIBBFD")
-#include "detail/stacktrace_libbfd_impl.h"
-#elif defined(USE_BACKTRACE_DECODE)
-#pragma message("Using libbacktrace")
-#include "detail/stacktrace_backtrace_impl.h"
-#endif
+#include DEMANGLE_BACKEND
+#include STACKTRACE_BACKEND
+#include DECODE_BACKEND
 
 namespace stacktrace
 {
