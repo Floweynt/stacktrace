@@ -119,16 +119,20 @@ endif()
 string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "libs")
 string(JSON COMPAT_CHECK ERROR_VARIABLE _ERROR_CODE GET ${COMPAT_CHECK} ${STACKTRACE_BACKEND})
 
-if(NOT _ERROR_CODE EQUAL NOTFOUND)
-    target_link_libraries(stacktrace INTERFACE ${COMPAT_CHECK})
+if(NOT _ERROR_CODE)
+    set(BACKEND_LINK_LIBS "${BACKEND_LINK_LIBS} ${COMPAT_CHECK}")
 endif()
 
 string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "libs")
 string(JSON COMPAT_CHECK ERROR_VARIABLE _ERROR_CODE GET ${COMPAT_CHECK} ${DECODE_BACKEND})
 
-if(NOT _ERROR_CODE EQUAL NOTFOUND)
-    target_link_libraries(stacktrace INTERFACE ${COMPAT_CHECK})
+if(NOT _ERROR_CODE)
+    set(BACKEND_LINK_LIBS "${BACKEND_LINK_LIBS} ${COMPAT_CHECK}")
 endif()
+
+separate_arguments(BACKEND_LINK_LIBS)
+target_link_libraries(stacktrace INTERFACE ${BACKEND_LINK_LIBS})
+
 
 # set macros
 message("Using backends '${STACKTRACE_BACKEND}' for stack generation and '${DECODE_BACKEND}' for decode")
