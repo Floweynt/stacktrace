@@ -1,3 +1,5 @@
+#ifndef __LIBBACKTRACE_HANDLE_H__
+#define __LIBBACKTRACE_HANDLE_H__
 #include <backtrace.h>
 #include "../stacktrace_fwd.h"
 
@@ -39,7 +41,17 @@ namespace stacktrace
 
                 backtrace_pcinfo(state, ptr, [](void* data, uintptr_t pc, const char* fname, int lineno, const char* fn) {
                     entry* buf = (entry*)data;
-                    *buf = { pc, (size_t)lineno, fname, fn};
+                    std::string file{ fname ? fname : "UNK" };
+                    std::string func{ fn ? fn : "UNK" };
+
+                    if (file.size() == 0)
+                        file = "UNK";
+                    if (func.size() == 0)
+                        func = "UNK";
+                    else
+                        demangle(func);
+     
+                    *buf = { pc, (size_t)lineno, file, func};
                     return 0;
                 }, nullptr, &e);
 
@@ -55,3 +67,4 @@ namespace stacktrace
 
     }
 }
+#endif

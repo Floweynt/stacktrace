@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     {
         std::cout << "argc == 2\n";
         char c = argv[1][0];
-        stacktrace::stack_printer printer = [](const stacktrace::entry& e, std::ostream& os)
+        stacktrace::stack_printer printer = [](const stacktrace::entry& e, std::ostream& os, size_t)
         {
             os << "AT: " << e.file << ':' << e.line << " (" << e.function << ')';
         };

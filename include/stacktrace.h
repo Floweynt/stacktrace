@@ -26,9 +26,9 @@ namespace stacktrace
             os << std::setw(sizeof(T) * 2) << std::setfill('0') << std::hex << t << std::setw(0) << std::setfill(' ') << std::dec;
         }
 
-        inline void default_print(const entry& e, std::ostream& os)
+        inline void default_print(const entry& e, std::ostream& os, size_t num)
         {
-            os << "AT: [";
+            os << "#" << num << " [";
             print_hex(e.address, os);
             os << "] " << e.file << ':' << e.line << " (" << e.function << ')';
         };
@@ -37,15 +37,18 @@ namespace stacktrace
     // generates a raw stacktrace
     pointer_stacktrace stacktrace(size_t capture = -1U);
     symbol_stacktrace get_traced(const pointer_stacktrace& trace);
+    
+    stack_iterator begin();
+    stack_iterator end();
 
-    using stack_printer = void (*)(const entry&, std::ostream& os);
+    using stack_printer = void (*)(const entry&, std::ostream& os, size_t num);
 
     // base impl for dump_stacktrace
     inline void dump_stacktrace(const symbol_stacktrace& st, std::ostream& os = std::cout, stack_printer printer = detail::default_print)
     {
-        for (entry e : st)
+        for (int i = 0; i < st.size(); i++)
         {
-            printer(e, os);
+            printer(st[i], os, i);
             os << '\n';
         }
     }

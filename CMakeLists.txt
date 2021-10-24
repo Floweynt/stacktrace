@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.19)
 project(stacktrace VERSION 1.0 DESCRIPTION "stacktrace" LANGUAGES CXX)
 
 add_library(stacktrace INTERFACE)
-set(MAX_CAPTURE_FRAMES "10000")
+set(MAX_CAPTURE_FRAMES "100")
 
 # install stuff
 target_include_directories(stacktrace INTERFACE 
@@ -65,9 +65,9 @@ endif()
 file(READ "compat-cfg.json" _COMPATIBILITY_TABLE_JSON)
 
 # set some flags
-if (DEFINED USE_STACkTRACE_BACKEND)
+if (DEFINED USE_STACKTRACE_BACKEND)
     set(IS_STACKTRACE_DEFAULT OFF)
-    set(STACKTRACE_BACKEND ${USE_STACkTRACE_BACKEND})
+    set(STACKTRACE_BACKEND ${USE_STACKTRACE_BACKEND})
 endif()
 
 if (DEFINED USE_DECODE_BACKEND)

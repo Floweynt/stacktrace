@@ -19,6 +19,8 @@ namespace stacktrace
 
     using symbol_stacktrace = std::vector<entry>;
     using pointer_stacktrace = std::vector<uintptr_t>;
+    
+    class stack_iterator;
 }
 
 #endif

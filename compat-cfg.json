@@ -41,6 +41,7 @@
     },
     "libs": {
         "libbfd": "dl bfd",
-        "libbacktrace": "backtrace"
+        "libbacktrace": "backtrace",
+        "libunwind": "unwind"
     }
 }
