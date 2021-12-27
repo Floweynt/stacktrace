@@ -17,6 +17,11 @@
             "execinfo": true,
             "libbacktrace": true,
             "libunwind": true
+        },
+        "defaults": {
+            "win": "winapi",
+            "linux": "execinfo",
+            "mac": "execinfo"
         }
     },
     "decode": {
@@ -37,6 +42,11 @@
             "winapi": false,
             "libbfd": true,
             "libbacktrace": true
+        },
+        "defaults": {
+            "win": "winapi",
+            "linux": "libbacktrace",
+            "mac": "libbacktrace"
         }
     },
     "libs": {

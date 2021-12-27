@@ -1,7 +1,8 @@
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
-#include "stacktrace.h"
+#include <stacktrace.h>
+#include <stacktrace_exception.h>
 
 void recursion(int i);
 void func_0(int i);
@@ -56,13 +57,13 @@ void method_3()
 
 void some_handler()
 {
-    throw_dbg(stacktrace::stack_aware_exception, "test_");
+    throw stacktrace::stacktrace_exception("test_");
 }
 
 void some_buggy_function()
 {
     // use the throw_dbg macro to make throwing easier
-    throw_dbg(stacktrace::stack_aware_exception, "something is wrong!");
+    throw stacktrace::stacktrace_exception("something is wrong!");
 }
 
 int main(int argc, char** argv)
@@ -89,7 +90,7 @@ int main(int argc, char** argv)
             {
                 method_0();
             }
-            catch (stacktrace::stack_aware_exception& e)
+            catch (stacktrace::stacktrace_exception& e)
             {
                 std::cout << stacktrace::stacktrace << e << std::endl;
             }
@@ -103,7 +104,7 @@ int main(int argc, char** argv)
             {
                 some_buggy_function();
             }
-            catch (stacktrace::stack_aware_exception& e)
+            catch (stacktrace::stacktrace_exception& e)
             {
                 std::cout << stacktrace::stacktrace << e << std::endl;
             }

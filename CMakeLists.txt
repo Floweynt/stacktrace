@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.19)
 # Basic cmake for install
 # ---------------------------
 
-project(stacktrace VERSION 1.0 DESCRIPTION "stacktrace" LANGUAGES CXX)
+project(stacktrace VERSION 1.1 DESCRIPTION "stacktrace" LANGUAGES CXX)
 
-add_library(stacktrace INTERFACE)
+add_library(stacktrace INTERFACE include/stacktrace_exception.h include/code_position_exception.h)
 set(MAX_CAPTURE_FRAMES "100")
 
 # install stuff
@@ -49,20 +49,31 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 # Compat checking
 # ---------------------------
 
+# check for compatibility
+if (WIN32)
+    set(_OS_NAME "win")
+elseif (UNIX)
+    set(_OS_NAME "linux")
+elseif (APPLE)
+    set(_OS_NAME "mac")
+endif()
+
 # set defaults
 set(IS_STACKTRACE_DEFAULT ON)
 set(IS_DECODE_DEFAULT ON)
+
+file(READ "compat-cfg.json" _COMPATIBILITY_TABLE_JSON)
+#string(JSON COMPAT_CHECK GET ${_COMPATIBILITY_TABLE_JSON} "stacktrace")
 
 if (WIN32)
     set(STACKTRACE_BACKEND "winapi")
     set(DECODE_BACKEND "winapi")
 elseif (UNIX OR APPLE)
     set(STACKTRACE_BACKEND "execinfo")
-    set(DECODE_BACKEND "libbfd")
+    set(DECODE_BACKEND "libbacktrace")
 endif()
 
 # read config
-file(READ "compat-cfg.json" _COMPATIBILITY_TABLE_JSON)
 
 # set some flags
 if (DEFINED USE_STACKTRACE_BACKEND)
@@ -73,15 +84,6 @@ endif()
 if (DEFINED USE_DECODE_BACKEND)
     set(IS_DECODE_DEFAULT OFF)
     set(DECODE_BACKEND ${USE_DECODE_BACKEND})
-endif()
-
-# check for compatibility
-if (WIN32)
-    set(_OS_NAME "win")
-elseif (UNIX)
-    set(_OS_NAME "linux")
-elseif (APPLE)
-    set(_OS_NAME "mac")
 endif()
 
 # check compat for stacktrace
