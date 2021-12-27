@@ -46,9 +46,11 @@ namespace stacktrace
                 break;
             case 2:
             case 1:
-                os << "what:" << e.what() << '\n';
+                os << "what: " << e.what() << '\n';
                 os << "at: " << e.file << ":" << e.line << " " << e.func;
         }
+
+        return os;
     }
 }
 

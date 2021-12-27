@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <stacktrace.h>
 #include <stacktrace_exception.h>
+#include <code_position_exception.h>
 
 void recursion(int i);
 void func_0(int i);
@@ -112,6 +113,10 @@ int main(int argc, char** argv)
         case '3':
             stacktrace::dump_stacktrace();
             std::cout << std::endl;
+            break;
+        case '4':
+            std::cout << "here!\n";
+            std::cout << stacktrace::longexcept << stacktrace::code_position_exception("test") << std::flush;
             break;
         default:
             break;

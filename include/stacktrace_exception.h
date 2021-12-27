@@ -35,6 +35,8 @@ namespace stacktrace
                 os << "stacktrace: ";
                 dump_stacktrace(e.trace, os);
         }
+
+        return os;
     }
 }
 
