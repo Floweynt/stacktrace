@@ -18,9 +18,9 @@ namespace stacktrace
     void signal_safe_stacktrace(Callback cb, size_t capture = MAX_CAPTURE_FRAMES)
     {
         static thread_local void* buffer[MAX_CAPTURE_FRAMES];
-        backtrace(buffer, std::min(capture, (size_t)MAX_CAPTURE_FRAMES));
+        size_t size = backtrace(buffer, std::min(capture, (size_t)MAX_CAPTURE_FRAMES));
 
-        for(int i = 0; i < std::min(capture, (size_t)MAX_CAPTURE_FRAMES); i++)
+        for(int i = 0; i < size; i++)
             cb((uintptr_t)buffer[i]);
     }
 } // namespace stacktrace
