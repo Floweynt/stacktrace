@@ -11,7 +11,7 @@ namespace stacktrace
     public:
         inline explicit stacktrace_exception(const char* what) : runtime_error(what)
         {
-            trace = get_traced(stacktrace(100));
+            trace = get_symbols(stacktrace(100));
         }
 
         inline const symbol_stacktrace& get_stacktrace() const

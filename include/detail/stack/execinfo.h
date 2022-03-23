@@ -21,6 +21,6 @@ namespace stacktrace
         backtrace(buffer, std::min(capture, (size_t)MAX_CAPTURE_FRAMES));
 
         for(int i = 0; i < std::min(capture, (size_t)MAX_CAPTURE_FRAMES); i++)
-            cb(buffer[i]);
+            cb((uintptr_t)buffer[i]);
     }
 } // namespace stacktrace
