@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <execinfo.h>
 #include <vector>
+
 namespace stacktrace
 {
     inline pointer_stacktrace stacktrace(size_t capture)
@@ -11,5 +12,15 @@ namespace stacktrace
         size_t size = backtrace((void**)stacktrace.data(), capture);
         stacktrace.resize(size);
         return stacktrace;
+    }
+
+    template<typename Callback>
+    void signal_safe_stacktrace(Callback cb, size_t capture = MAX_CAPTURE_FRAMES)
+    {
+        static thread_local void* buffer[MAX_CAPTURE_FRAMES];
+        backtrace(buffer, std::min(capture, (size_t)MAX_CAPTURE_FRAMES));
+
+        for(int i = 0; i < std::min(capture, (size_t)MAX_CAPTURE_FRAMES); i++)
+            cb(buffer[i]);
     }
 } // namespace stacktrace

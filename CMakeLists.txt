@@ -161,8 +161,13 @@ configure_file("${PROJECT_SOURCE_DIR}/include/config.h.in" "${PROJECT_BINARY_DIR
 add_executable(stacktrace-test "${PROJECT_SOURCE_DIR}/examples/main.cpp")
 add_dependencies(stacktrace-test stacktrace)
 
+add_executable(stacktrace-signal "${PROJECT_SOURCE_DIR}/examples/signal.cpp")
+add_dependencies(stacktrace-signal stacktrace)
+
 include_directories("${PROJECT_BINARY_DIR}/include/")
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 set(CMAKE_BUILD_TYPE Debug)
 
 target_link_libraries(stacktrace-test stacktrace)
+target_link_libraries(stacktrace-signal stacktrace)
+

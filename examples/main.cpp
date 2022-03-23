@@ -15,7 +15,6 @@ void method_3();
 void some_handler();
 
 void recursion(int i)
-
 {
     if (i == 5)
         func_0(0);

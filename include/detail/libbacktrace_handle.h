@@ -19,20 +19,29 @@ namespace stacktrace
 
             inline pointer_stacktrace get_stack()
             {
-                if (!state)
-                    return {};
-
                 pointer_stacktrace st;
 
+                get_with_callback([&, st](uintptr_t pc) mutable {
+                    st.push_back(pc);
+                });
+
+                return st;
+            }
+
+
+            template<typename Callback>
+            void get_with_callback(Callback cb)
+            {
+                if (!state)
+                    return;
                 backtrace_simple(
                     state, 0,
                     [](void* buf, uintptr_t pc) {
-                        ((pointer_stacktrace*)buf)->push_back(pc);
+                        (*((Callback*)buf))(pc);
                         return 0;
                     },
-                    [](void* buf, const char*, int) { ((pointer_stacktrace*)buf)->push_back(0x0); }, (void*)&st);
-
-                return st;
+                    [](void* buf, const char*, int) { (*((Callback*)buf))(0x0);}, &cb
+                );
             }
 
             inline entry get_info(uintptr_t ptr)
