@@ -1,8 +1,8 @@
 #include "../../stacktrace_fwd.h"
 #include <bfd.h>
+#include <cstdio>
 #include <dlfcn.h>
 #include <link.h>
-#include <cstdio>
 
 namespace stacktrace
 {
@@ -24,6 +24,7 @@ namespace stacktrace
             const char* functionname;
             unsigned int line;
             unsigned int discriminator;
+
         public:
             inline libbfd_wrapper()
             {
@@ -112,26 +113,29 @@ namespace stacktrace
                     pc = bfd_scan_vma(buf, NULL, 16);
                     found = false;
 
-                    bfd_map_over_sections(abfd, [](bfd* abfd, asection* section, void* args) {
-                        bfd_vma vma;
-                        bfd_size_type size;
-                        libbfd_wrapper* that = (libbfd_wrapper*)args;
+                    bfd_map_over_sections(
+                        abfd,
+                        [](bfd* abfd, asection* section, void* args) {
+                            bfd_vma vma;
+                            bfd_size_type size;
+                            libbfd_wrapper* that = (libbfd_wrapper*)args;
 
-                        if ((bfd_section_flags(section) & SEC_ALLOC) == 0)
-                            return;
+                            if ((bfd_section_flags(section) & SEC_ALLOC) == 0)
+                                return;
 
-                        vma = bfd_section_vma(section);
-                        if (that->pc < vma)
-                            return;
+                            vma = bfd_section_vma(section);
+                            if (that->pc < vma)
+                                return;
 
-                        size = bfd_section_size(section);
-                        if (that->pc >= vma + size)
-                            return;
+                            size = bfd_section_size(section);
+                            if (that->pc >= vma + size)
+                                return;
 
-                        that->found = bfd_find_nearest_line_discriminator(abfd, section, that->syms, that->pc - vma,
-                            &that->filename, &that->functionname,
-                            &that->line, &that->discriminator);
-                    }, (void*)this);
+                            that->found = bfd_find_nearest_line_discriminator(abfd, section, that->syms, that->pc - vma,
+                                                                              &that->filename, &that->functionname,
+                                                                              &that->line, &that->discriminator);
+                        },
+                        (void*)this);
 
                     if (!found)
                         return entry(ptr, 0, "UNK", "UNK");
@@ -158,7 +162,7 @@ namespace stacktrace
                 bfd_close(abfd);
             }
         };
-    }
+    } // namespace detail
 
     inline symbol_stacktrace get_traced(const pointer_stacktrace& trace)
     {
@@ -170,4 +174,4 @@ namespace stacktrace
 
         return ret;
     }
-}
+} // namespace stacktrace

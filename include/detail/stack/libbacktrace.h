@@ -6,4 +6,4 @@ namespace stacktrace
     {
         return detail::get_instance().get_stack();
     }
-}
+} // namespace stacktrace

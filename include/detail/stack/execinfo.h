@@ -1,7 +1,7 @@
 #include "../../stacktrace_fwd.h"
+#include <algorithm>
 #include <execinfo.h>
 #include <vector>
-#include <algorithm>
 namespace stacktrace
 {
     inline pointer_stacktrace stacktrace(size_t capture)
@@ -12,4 +12,4 @@ namespace stacktrace
         stacktrace.resize(size);
         return stacktrace;
     }
-}
+} // namespace stacktrace

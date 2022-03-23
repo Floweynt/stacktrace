@@ -1,5 +1,5 @@
-#include <backtrace.h>
 #include "../libbacktrace_handle.h"
+#include <backtrace.h>
 namespace stacktrace
 {
     inline symbol_stacktrace get_traced(const pointer_stacktrace& trace)
@@ -12,4 +12,4 @@ namespace stacktrace
         return ret;
     }
 
-}
+} // namespace stacktrace

@@ -6,7 +6,6 @@ namespace stacktrace
     {
         inline void demangle(std::string& str)
         {
-
         }
-    }
-}
+    } // namespace detail
+} // namespace stacktrace

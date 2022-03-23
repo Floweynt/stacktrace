@@ -1,5 +1,5 @@
-#include <string>
 #include <cxxabi.h>
+#include <string>
 
 namespace stacktrace
 {
@@ -15,5 +15,5 @@ namespace stacktrace
                 free(ptr);
             }
         }
-    }
-}
+    } // namespace detail
+} // namespace stacktrace

@@ -1,7 +1,7 @@
 #ifndef __LIBBACKTRACE_HANDLE_H__
 #define __LIBBACKTRACE_HANDLE_H__
-#include <backtrace.h>
 #include "../stacktrace_fwd.h"
+#include <backtrace.h>
 
 namespace stacktrace
 {
@@ -10,6 +10,7 @@ namespace stacktrace
         class backtrace_wrapper
         {
             backtrace_state* state;
+
         public:
             inline backtrace_wrapper()
             {
@@ -23,37 +24,41 @@ namespace stacktrace
 
                 pointer_stacktrace st;
 
-                backtrace_simple(state, 0, [](void* buf, uintptr_t pc) {
-                    ((pointer_stacktrace*)buf)->push_back(pc);
-                    return 0;
-                }, [](void* buf, const char*, int) {
-                ((pointer_stacktrace*)buf)->push_back(0x0);
-                }, (void*)&st);
+                backtrace_simple(
+                    state, 0,
+                    [](void* buf, uintptr_t pc) {
+                        ((pointer_stacktrace*)buf)->push_back(pc);
+                        return 0;
+                    },
+                    [](void* buf, const char*, int) { ((pointer_stacktrace*)buf)->push_back(0x0); }, (void*)&st);
 
                 return st;
             }
 
             inline entry get_info(uintptr_t ptr)
             {
-                entry e{ ptr, 0, "UNK", "UNK" };
+                entry e{ptr, 0, "UNK", "UNK"};
                 if (!state)
                     return e;
 
-                backtrace_pcinfo(state, ptr, [](void* data, uintptr_t pc, const char* fname, int lineno, const char* fn) {
-                    entry* buf = (entry*)data;
-                    std::string file{ fname ? fname : "UNK" };
-                    std::string func{ fn ? fn : "UNK" };
+                backtrace_pcinfo(
+                    state, ptr,
+                    [](void* data, uintptr_t pc, const char* fname, int lineno, const char* fn) {
+                        entry* buf = (entry*)data;
+                        std::string file{fname ? fname : "UNK"};
+                        std::string func{fn ? fn : "UNK"};
 
-                    if (file.size() == 0)
-                        file = "UNK";
-                    if (func.size() == 0)
-                        func = "UNK";
-                    else
-                        demangle(func);
-     
-                    *buf = { pc, (size_t)lineno, file, func};
-                    return 0;
-                }, nullptr, &e);
+                        if (file.size() == 0)
+                            file = "UNK";
+                        if (func.size() == 0)
+                            func = "UNK";
+                        else
+                            demangle(func);
+
+                        *buf = {pc, (size_t)lineno, file, func};
+                        return 0;
+                    },
+                    nullptr, &e);
 
                 return e;
             }
@@ -65,6 +70,6 @@ namespace stacktrace
             return *ptr;
         }
 
-    }
-}
+    } // namespace detail
+} // namespace stacktrace
 #endif

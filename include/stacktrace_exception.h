@@ -1,9 +1,5 @@
-//
-// Created by flowey on 12/27/21.
-//
-
-#ifndef STACKTRACE_SIMPLE_EXCEPTION_H
-#define STACKTRACE_SIMPLE_EXCEPTION_H
+#ifndef __STACKTRACE_SIMPLE_EXCEPTION_H__
+#define __STACKTRACE_SIMPLE_EXCEPTION_H__
 #include <stacktrace.h>
 
 namespace stacktrace
@@ -11,33 +7,37 @@ namespace stacktrace
     class stacktrace_exception : std::runtime_error
     {
         symbol_stacktrace trace;
+
     public:
         inline explicit stacktrace_exception(const char* what) : runtime_error(what)
         {
             trace = get_traced(stacktrace(100));
         }
 
-        inline const symbol_stacktrace& get_stacktrace() const { return trace; }
+        inline const symbol_stacktrace& get_stacktrace() const
+        {
+            return trace;
+        }
         friend std::ostream& operator<<(std::ostream&, const stacktrace_exception&);
     };
 
-    inline std::ostream &operator<<(std::ostream& os, const stacktrace_exception & e)
+    inline std::ostream& operator<<(std::ostream& os, const stacktrace_exception& e)
     {
         int i = os.iword(detail::geti());
         switch (i)
         {
-            case 0:
-            case 1:
-                os << e.what();
-                break;
-            case 2:
-                os << "what: " << e.what() << '\n';
-                os << "stacktrace: ";
-                dump_stacktrace(e.trace, os);
+        case 0:
+        case 1:
+            os << e.what();
+            break;
+        case 2:
+            os << "what: " << e.what() << '\n';
+            os << "stacktrace: ";
+            dump_stacktrace(e.trace, os);
         }
 
         return os;
     }
-}
+} // namespace stacktrace
 
-#endif //STACKTRACE_SIMPLE_EXCEPTION_H
+#endif // STACKTRACE_SIMPLE_EXCEPTION_H

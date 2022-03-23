@@ -8,4 +8,4 @@ namespace stacktrace
             ret[i].address = trace[i];
         return ret;
     }
-}
+} // namespace stacktrace
