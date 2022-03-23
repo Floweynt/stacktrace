@@ -164,7 +164,7 @@ namespace stacktrace
         };
     } // namespace detail
 
-    inline symbol_stacktrace get_traced(const pointer_stacktrace& trace)
+    inline symbol_stacktrace get_symbols(const pointer_stacktrace& trace)
     {
         symbol_stacktrace ret;
         static detail::libbfd_wrapper state;
