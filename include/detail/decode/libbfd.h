@@ -1,5 +1,11 @@
 #include "../../stacktrace_fwd.h"
+
+#define PACKAGE 1
+#define PACKAGE_VERSION 1
 #include <bfd.h>
+#undef PACKAGE 
+#undef PACKAGE_VERSION
+
 #include <cstdio>
 #include <dlfcn.h>
 #include <link.h>
