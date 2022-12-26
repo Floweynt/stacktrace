@@ -11,5 +11,4 @@ namespace stacktrace
 
         return ret;
     }
-
 } // namespace stacktrace
