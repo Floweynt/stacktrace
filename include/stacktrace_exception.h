@@ -9,7 +9,7 @@ namespace stacktrace
         symbol_stacktrace trace;
 
     public:
-        inline explicit stacktrace_exception(const char* what) : runtime_error(what)
+        inline explicit stacktrace_exception(const std::string& what) : runtime_error(what)
         {
             trace = get_symbols(stacktrace(100));
         }
