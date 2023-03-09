@@ -84,7 +84,7 @@ namespace stacktrace
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif
 
-#define rethrow                                                                                                             \
+#define stacktrace_rethrow                                                                                                  \
     catch (std::exception & e)                                                                                              \
     {                                                                                                                       \
         throw stacktrace::stack_aware_exception(e.what(), __LINE__, __FILE__, __func__, __PRETTY_FUNCTION__)                \
