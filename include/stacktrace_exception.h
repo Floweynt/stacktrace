@@ -4,7 +4,7 @@
 
 namespace stacktrace
 {
-    class stacktrace_exception : std::runtime_error
+    class stacktrace_exception : public std::runtime_error
     {
         symbol_stacktrace trace;
 
