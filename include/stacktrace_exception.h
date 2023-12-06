@@ -1,6 +1,6 @@
 #ifndef __STACKTRACE_SIMPLE_EXCEPTION_H__
 #define __STACKTRACE_SIMPLE_EXCEPTION_H__
-#include <stacktrace.h>
+#include "stacktrace.h"
 
 namespace stacktrace
 {

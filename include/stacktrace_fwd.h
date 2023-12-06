@@ -1,5 +1,6 @@
 #ifndef __STACKTRACE_FWD_H__
 #define __STACKTRACE_FWD_H__
+#include <cstdint>
 #include <string>
 #include <vector>
 

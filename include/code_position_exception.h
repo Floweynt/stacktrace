@@ -1,10 +1,6 @@
-//
-// Created by flowey on 12/27/21.
-//
-
 #ifndef __CODE_POSITION_EXCEPTION_H__
 #define __CODE_POSITION_EXCEPTION_H__
-#include <stacktrace.h>
+#include "stacktrace.h"
 
 namespace stacktrace
 {

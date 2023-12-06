@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/flowey/dev/cpp/stacktrace/build",
+  "command": "/usr/bin/c++  -I/home/flowey/dev/cpp/stacktrace/include -I/home/flowey/dev/cpp/stacktrace/build  -o CMakeFiles/stacktrace-test.dir/examples/main.cpp.o -c /home/flowey/dev/cpp/stacktrace/examples/main.cpp",
+  "file": "/home/flowey/dev/cpp/stacktrace/examples/main.cpp",
+  "output": "CMakeFiles/stacktrace-test.dir/examples/main.cpp.o"
+},
+{
+  "directory": "/home/flowey/dev/cpp/stacktrace/build",
+  "command": "/usr/bin/c++  -I/home/flowey/dev/cpp/stacktrace/include -I/home/flowey/dev/cpp/stacktrace/build  -o CMakeFiles/stacktrace-signal.dir/examples/signal.cpp.o -c /home/flowey/dev/cpp/stacktrace/examples/signal.cpp",
+  "file": "/home/flowey/dev/cpp/stacktrace/examples/signal.cpp",
+  "output": "CMakeFiles/stacktrace-signal.dir/examples/signal.cpp.o"
+}
+]
