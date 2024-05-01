@@ -1,11 +1,10 @@
+#include "../common.h"
 #include <string>
 
 namespace stacktrace
 {
     namespace detail
     {
-        inline void demangle(std::string& str)
-        {
-        }
+        INLINE void demangle(std::string& str) {}
     } // namespace detail
 } // namespace stacktrace

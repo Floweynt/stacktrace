@@ -1,6 +1,6 @@
 #include "../../stacktrace_fwd.h"
-#include <Windows.h>
 #include <DbgHelp.h>
+#include <Windows.h>
 
 #pragma comment(lib, "DbgHelp.lib")
 
@@ -51,7 +51,7 @@ namespace stacktrace
             }
         };
     } // namespace detail
-    
+
     inline symbol_stacktrace get_symbols(const pointer_stacktrace& trace)
     {
         symbol_stacktrace ret;

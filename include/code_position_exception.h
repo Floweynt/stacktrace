@@ -1,6 +1,8 @@
-#ifndef __CODE_POSITION_EXCEPTION_H__
-#define __CODE_POSITION_EXCEPTION_H__
+#pragma once
+#include "detail/common.h"
 #include "stacktrace.h"
+#include <ostream>
+#include <stdexcept>
 
 namespace stacktrace
 {
@@ -12,43 +14,34 @@ namespace stacktrace
         int line;
 
     public:
-        inline explicit code_position_exception(const char* what, const char* file = __builtin_FILE(),
-                                                const char* func = __builtin_FUNCTION(), int line = __builtin_LINE())
+        INLINE explicit code_position_exception(
+            const char* what, const char* file = __builtin_FILE(), const char* func = __builtin_FUNCTION(), int line = __builtin_LINE()
+        )
             : runtime_error(what), file(file), func(func), line(line)
         {
         }
 
-        friend std::ostream& operator<<(std::ostream&, const code_position_exception&);
-        inline const char* get_file() const
-        {
-            return file;
-        }
-        inline const char* get_func() const
-        {
-            return func;
-        }
-        inline int get_line() const
-        {
-            return line;
-        }
+        friend auto operator<<(std::ostream& /*os*/, const code_position_exception& /*e*/) -> std::ostream&;
+        INLINE auto get_file() const -> const char* { return file; }
+        INLINE auto get_func() const -> const char* { return func; }
+        INLINE auto get_line() const -> int { return line; }
     };
 
-    inline std::ostream& operator<<(std::ostream& os, const code_position_exception& e)
+    INLINE auto operator<<(std::ostream& stream, const code_position_exception& instance) -> std::ostream&
     {
-        int i = os.iword(detail::geti());
-        switch (i)
+        switch (stream.iword(detail::get_state()))
         {
         case 0:
-            os << e.what();
+            stream << instance.what();
             break;
         case 2:
         case 1:
-            os << "what: " << e.what() << '\n';
-            os << "at: " << e.file << ":" << e.line << " " << e.func;
+            stream << "what: " << instance.what() << '\n';
+            stream << "at: " << instance.file << ":" << instance.line << " " << instance.func;
+        default:
+            break;
         }
 
-        return os;
+        return stream;
     }
 } // namespace stacktrace
-
-#endif //__CODE_POSITION_EXCEPTION_H__

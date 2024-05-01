@@ -1,6 +1,9 @@
-#ifndef __STACKTRACE_SIMPLE_EXCEPTION_H__
-#define __STACKTRACE_SIMPLE_EXCEPTION_H__
+#pragma once
+#include "detail/common.h"
 #include "stacktrace.h"
+#include <ostream>
+#include <stdexcept>
+#include <string>
 
 namespace stacktrace
 {
@@ -9,35 +12,29 @@ namespace stacktrace
         symbol_stacktrace trace;
 
     public:
-        inline explicit stacktrace_exception(const std::string& what) : runtime_error(what)
-        {
-            trace = get_symbols(stacktrace(100));
-        }
+        INLINE explicit stacktrace_exception(const std::string& what) : runtime_error(what) { trace = get_symbols(stacktrace(100)); }
 
-        inline const symbol_stacktrace& get_stacktrace() const
-        {
-            return trace;
-        }
-        friend std::ostream& operator<<(std::ostream&, const stacktrace_exception&);
+        INLINE auto get_stacktrace() const -> const symbol_stacktrace& { return trace; }
+        friend auto operator<<(std::ostream& /*os*/, const stacktrace_exception& /*e*/) -> std::ostream&;
     };
 
-    inline std::ostream& operator<<(std::ostream& os, const stacktrace_exception& e)
+    INLINE auto operator<<(std::ostream& stream, const stacktrace_exception& inst) -> std::ostream&
     {
-        int i = os.iword(detail::geti());
-        switch (i)
+        switch (stream.iword(detail::get_state()))
         {
         case 0:
         case 1:
-            os << e.what();
+            stream << inst.what();
             break;
         case 2:
-            os << "what: " << e.what() << '\n';
-            os << "stacktrace: ";
-            dump_stacktrace(e.trace, os);
+            stream << "what: " << inst.what() << '\n';
+            stream << "stacktrace: \n";
+            dump_stacktrace(inst.trace, stream);
+            break;
+        default:
+            break;
         }
 
-        return os;
+        return stream;
     }
 } // namespace stacktrace
-
-#endif // STACKTRACE_SIMPLE_EXCEPTION_H

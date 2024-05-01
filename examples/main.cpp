@@ -1,9 +1,8 @@
+#include <code_position_exception.h>
 #include <cstdio>
 #include <iostream>
-#include <iomanip>
 #include <stacktrace.h>
 #include <stacktrace_exception.h>
-#include <code_position_exception.h>
 
 void recursion(int i);
 void func_0(int i);
@@ -17,48 +16,38 @@ void some_handler();
 void recursion(int i)
 {
     if (i == 5)
+    {
         func_0(0);
+    }
     else
+    {
         recursion(i + 1);
+    }
 }
 
 void func_0(int i)
 {
     if (i == 2)
+    {
         some_handler();
+    }
     else
+    {
         func_1(i + 1);
+    }
 }
 
-void func_1(int i)
-{
-    func_0(i);
-}
+void func_1(int i) { func_0(i); }
 
-void method_0()
-{
-    method_1();
-}
+void method_0() { method_1(); }
 
-void method_1()
-{
-    method_2();
-}
+void method_1() { method_2(); }
 
-void method_2()
-{
-    method_3();
-}
+void method_2() { method_3(); }
 
-void method_3()
-{
-    recursion(0);
-}
+void method_3() { recursion(0); }
 
-void some_handler()
-{
-    throw stacktrace::stacktrace_exception("test_");
-}
+void some_handler() { throw stacktrace::stacktrace_exception("test_"); }
 
 void some_buggy_function()
 {
@@ -77,13 +66,12 @@ int main(int argc, char** argv)
     else if (argc == 2)
     {
         std::cout << "argc == 2\n";
-        char c = argv[1][0];
-        stacktrace::stack_printer printer = [](const stacktrace::entry& e, std::ostream& os, size_t)
-        {
+        char arg = argv[1][0];
+        stacktrace::stack_printer printer = [](const stacktrace::entry& e, std::ostream& os, size_t) {
             os << "AT: " << e.file << ':' << e.line << " (" << e.function << ')';
         };
 
-        switch (c)
+        switch (arg)
         {
         case '0':
             try
@@ -92,12 +80,12 @@ int main(int argc, char** argv)
             }
             catch (stacktrace::stacktrace_exception& e)
             {
-                std::cout << stacktrace::stacktrace << e << std::endl;
+                std::cout << stacktrace::stacktrace << e << '\n';
             }
             break;
         case '1':
             stacktrace::dump_stacktrace();
-            std::cout << std::endl;
+            std::cout << '\n';
             break;
         case '2':
             try
@@ -106,12 +94,12 @@ int main(int argc, char** argv)
             }
             catch (stacktrace::stacktrace_exception& e)
             {
-                std::cout << stacktrace::stacktrace << e << std::endl;
+                std::cout << stacktrace::stacktrace << e << '\n';
             }
             break;
         case '3':
             stacktrace::dump_stacktrace();
-            std::cout << std::endl;
+            std::cout << '\n';
             break;
         case '4':
             std::cout << "here!\n";

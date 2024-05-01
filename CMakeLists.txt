@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 
 set(MAX_CAPTURE_FRAMES "100")
+set(CXX_STANDARD 11)
 project(stacktrace VERSION 1.1 DESCRIPTION "stacktrace" LANGUAGES CXX)
 
 add_library(stacktrace INTERFACE include/stacktrace_exception.h include/code_position_exception.h)

@@ -1,3 +1,5 @@
+#include "../common.h"
+#include <cstdlib>
 #include <cxxabi.h>
 #include <string>
 
@@ -5,11 +7,11 @@ namespace stacktrace
 {
     namespace detail
     {
-        inline void demangle(std::string& str)
+        INLINE void demangle(std::string& str)
         {
-            int status;
+            int status = 0;
             char* ptr = abi::__cxa_demangle(str.c_str(), 0, 0, &status);
-            if (ptr)
+            if (ptr != nullptr)
             {
                 str.assign(ptr);
                 free(ptr);

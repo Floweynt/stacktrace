@@ -1,7 +1,11 @@
-#ifndef __LIBBACKTRACE_HANDLE_H__
-#define __LIBBACKTRACE_HANDLE_H__
+#pragma once
+
 #include "../stacktrace_fwd.h"
+#include "common.h"
 #include <backtrace.h>
+#include <cstddef>
+#include <cstdint>
+#include <string>
 
 namespace stacktrace
 {
@@ -12,73 +16,76 @@ namespace stacktrace
             backtrace_state* state;
 
         public:
-            inline backtrace_wrapper()
+            INLINE backtrace_wrapper() : state(backtrace_create_state("/proc/self/exe", 0, nullptr, this)) {}
+
+            INLINE auto get_stack() -> pointer_stacktrace
             {
-                state = backtrace_create_state("/proc/self/exe", 0, nullptr, this);
+                pointer_stacktrace trace;
+
+                get_with_callback([&, trace](uintptr_t addr) mutable { trace.push_back(addr); });
+
+                return trace;
             }
 
-            inline pointer_stacktrace get_stack()
-            {
-                pointer_stacktrace st;
-
-                get_with_callback([&, st](uintptr_t pc) mutable {
-                    st.push_back(pc);
-                });
-
-                return st;
-            }
-
-
-            template<typename Callback>
-            void get_with_callback(Callback cb)
+            template <typename Callback>
+            void get_with_callback(Callback callback)
             {
                 if (!state)
+                {
                     return;
+                }
                 backtrace_simple(
                     state, 0,
-                    [](void* buf, uintptr_t pc) {
-                        (*((Callback*)buf))(pc);
+                    [](void* buf, uintptr_t trace) {
+                        (*((Callback*)buf))(trace);
                         return 0;
                     },
-                    [](void* buf, const char*, int) { (*((Callback*)buf))(0x0);}, &cb
+                    [](void* buf, const char*, int) { (*((Callback*)buf))(0x0); }, &callback
                 );
             }
 
-            inline entry get_info(uintptr_t ptr)
+            INLINE auto get_info(uintptr_t ptr) -> entry
             {
-                entry e{ptr, 0, "UNK", "UNK"};
-                if (!state)
-                    return e;
+                entry ent{ptr, 0, "UNK", "UNK"};
+                if (state == nullptr)
+                {
+                    return ent;
+                }
 
                 backtrace_pcinfo(
                     state, ptr,
-                    [](void* data, uintptr_t pc, const char* fname, int lineno, const char* fn) {
-                        entry* buf = (entry*)data;
-                        std::string file{fname ? fname : "UNK"};
-                        std::string func{fn ? fn : "UNK"};
+                    [](void* data, uintptr_t addr, const char* file_in, int lineno, const char* func_in) {
+                        auto* buf = (entry*)data;
+                        std::string file{file_in != nullptr ? file_in : "UNK"};
+                        std::string func{func_in != nullptr ? func_in : "UNK"};
 
-                        if (file.size() == 0)
+                        if (file.empty())
+                        {
                             file = "UNK";
-                        if (func.size() == 0)
+                        }
+                        if (func.empty())
+                        {
                             func = "UNK";
+                        }
                         else
+                        {
                             demangle(func);
+                        }
 
-                        *buf = {pc, (size_t)lineno, file, func};
+                        *buf = {addr, (size_t)lineno, file, func};
                         return 0;
                     },
-                    nullptr, &e);
+                    nullptr, &ent
+                );
 
-                return e;
+                return ent;
             }
         };
 
-        inline backtrace_wrapper get_instance()
+        INLINE auto get_instance() -> backtrace_wrapper
         {
-            static backtrace_wrapper* ptr = new backtrace_wrapper();
+            static auto* ptr = new backtrace_wrapper();
             return *ptr;
         }
-
     } // namespace detail
 } // namespace stacktrace
-#endif
